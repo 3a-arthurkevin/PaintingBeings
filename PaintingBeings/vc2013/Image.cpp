@@ -3,10 +3,6 @@
 Image::Image()
 {
 	this->_miniatureSize = 30;
-
-	this->_surface = ci::Surface();
-
-	this->_miniatureSurface = ci::Surface();
 }
 
 
@@ -44,7 +40,7 @@ ci::Surface Image::getMiniatureSurface() const
 	return this->_miniatureSurface;
 }
 
-void Image::loadWithoutImagePath()
+bool Image::loadWithoutImagePath()
 {
 	try
 	{
@@ -58,19 +54,23 @@ void Image::loadWithoutImagePath()
 			this->_texture = gl::Texture(this->_surface);
 
 			this->generateMiniature();
+
+			return true;
 		}
 		else
 		{
 			app::console() << "Image path is empty !" << std::endl;
+			return false;
 		}
 	}
 	catch (...)
 	{
 		app::console() << "Unable to load the image." << std::endl;
+		return false;
 	}
 }
 
-void Image::loadWithImagePath(boost::filesystem::path path)
+bool Image::loadWithImagePath(boost::filesystem::path path)
 {
 	try
 	{
@@ -79,11 +79,22 @@ void Image::loadWithImagePath(boost::filesystem::path path)
 		this->_texture = gl::Texture(this->_surface);
 
 		this->generateMiniature();
+
+		return true;
 	}
 	catch (...)
 	{
 		app::console() << "Unable to load the image." << std::endl;
+		return false;
 	}
+}
+
+void Image::setImage(Surface surface)
+{
+	this->_surface = surface;
+	this->_texture = gl::Texture(this->_surface);
+
+	this->generateMiniature();
 }
 
 void Image::generateMiniature()
@@ -91,4 +102,13 @@ void Image::generateMiniature()
 	this->_miniatureSurface = Surface(this->_miniatureSize, this->_miniatureSize, false);
 
 	ip::resize(this->_surface, &(this->_miniatureSurface));
+}
+
+void Image::copyImage(const Image image)
+{
+	this->_imageSource = image._imageSource;
+	this->_miniatureSize = image._miniatureSize;
+	this->_texture = image._texture.weakClone();//gl::Texture(image._texture);
+	this->_surface = image._surface.clone();
+	this->_miniatureSurface = image._miniatureSurface.clone();
 }

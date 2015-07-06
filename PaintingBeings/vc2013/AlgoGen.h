@@ -19,43 +19,41 @@ using namespace ci;
 class AlgoGen
 {
 	private:
-		Image _image;
+		Surface _surfaceMiniatureOriginal;
 
+		// Taille de la poulation pour l'algo génétique
 		int _populationSize;
 		
+		// Score pour le fitting des pixels à atteindre
 		int _scoreToAim;
 		int _scoreThreshold;
 
+		// Seuil servant à créer les nouvelles populations de l'algo génétique
 		float _thresholdSurvivor;
 		float _thresholdCrossover;
 		float _thresholdMutation;
 		float _thresholdLeftover;
 
+		// Population d'image
 		std::vector<ImageMiniature> _imageMiniaturePopulation;
-
-		Surface _imageToDisplay;
 
 	public:
 		AlgoGen();
 		~AlgoGen();
 
-		void setup(const Image image);
+		// Set les paramètres pour lancer l'algo gen en créant la population initial
+		void setup(const ci::Surface miniatureSurface);
+
+		// Note la population, trie la liste et crée la nouvelle population
 		void update();
 
-		std::vector<ImageMiniature> getImagePopulation()
-		{
-			return _imageMiniaturePopulation;
-		}
-
-		Surface getImageToDisplay()
-		{
-			return _imageToDisplay;
-		}
-
+		// Fonction cappant les seuils pour avoir un cumul egal à 100% (pas plus par moins) <--- fonction vide pour le moment
 		void capThreshold();
 
-		void setImage(const Image image);
-		Image getImage() const;
+		// Getter et Setter
+		std::vector<ImageMiniature> getImagePopulation();
+		Surface getSurfaceMiniatureOriginal() const;
+		Surface getBestImage();
 
 		void setPopulation(const int value);
 		int& getPopulationSize();
@@ -74,13 +72,22 @@ class AlgoGen
 		float& getThresholdMutation();
 		float& getThresholdNewPopulation();
 
+		// Note l'image
 		void rateImage(ImageMiniature& imageToRate);
+		// Note la population
 		void ratePopulation();
 
+		// Créer une image par crossover
 		ImageMiniature crossover(ImageMiniature father, ImageMiniature mother);
+		// Créer une image par mutation
 		ImageMiniature mutation(ImageMiniature image);
+		// Créer une image aléatoirement
 		ImageMiniature createRandomImage();
 
+		// Créer le pourentage de la nouvelle population pour le
+			// Crossover
+			// Mutation
+			// Les nouveaux à générer aléatoirement
 		void generateCrossover(std::vector<ImageMiniature>& newPopulation, const std::vector<ImageMiniature> originalPopulation, const std::vector<ImageMiniature> survivorPopulation, int nbElementToGenerate);
 		void generateMutation(std::vector<ImageMiniature>& newPopulation, const std::vector<ImageMiniature> survivorPopulation, int nbElementToGenerate);
 		void generateLeftover(std::vector<ImageMiniature>& newPopulation, int nbElementToGenerate);

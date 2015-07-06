@@ -114,7 +114,6 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageBeing.cpp" />
     <ClCompile Include="ImageMiniature.cpp" />
-    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="PrimitiveFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -125,7 +124,6 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageBeing.h" />
     <ClInclude Include="ImageMiniature.h" />
-    <ClInclude Include="Interface.h" />
     <ClInclude Include="PrimitiveFactory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

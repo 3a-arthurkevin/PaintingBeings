@@ -3,9 +3,7 @@
 
 AlgoGen::AlgoGen()
 {
-	this->_image = Image();
-
-	this->_populationSize = 50;
+	this->_populationSize = 25;
 
 	this->_scoreToAim = 0;
 	this->_scoreThreshold = 20;
@@ -14,9 +12,6 @@ AlgoGen::AlgoGen()
 	this->_thresholdCrossover = 0.3f;
 	this->_thresholdMutation = 0.3f;
 	this->_thresholdLeftover = 0.3f;
-
-	this->_imageMiniaturePopulation = std::vector<ImageMiniature>();
-	Surface _imageToDisplay = Surface();
 }
 
 
@@ -24,16 +19,16 @@ AlgoGen::~AlgoGen()
 {
 }
 
-void AlgoGen::setup(const Image image)
+void AlgoGen::setup(const ci::Surface miniatureSurface)
 {
-	this->_image = image;
+	capThreshold();
+
+	this->_surfaceMiniatureOriginal = miniatureSurface.clone();
 	
 	this->_imageMiniaturePopulation.clear();
 
 	for (int i = 0; i < this->_populationSize; ++i)
 		this->_imageMiniaturePopulation.push_back(this->createRandomImage());
-
-	this->_imageToDisplay = this->_imageMiniaturePopulation[0].getSurface().clone();
 }
 
 void AlgoGen::update()
@@ -57,7 +52,7 @@ void AlgoGen::update()
 
 	//Filling the new population
 	auto iteratorBegin = this->_imageMiniaturePopulation.begin();
-	newPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + nbSurvivor));;
+	newPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + nbSurvivor));
 
 	iteratorBegin = this->_imageMiniaturePopulation.begin();
 	auto crossOverPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + nbCrossover));
@@ -69,25 +64,33 @@ void AlgoGen::update()
 	this->generateMutation(newPopulation, mutationPopulation, nbMutation);
 	this->generateLeftover(newPopulation, nbLeftover);
 
-
-	this->_imageToDisplay = this->_imageMiniaturePopulation[0].getSurface().clone();
-
 	this->_imageMiniaturePopulation = newPopulation;
+}
+
+std::vector<ImageMiniature> AlgoGen::getImagePopulation()
+{
+	return this->_imageMiniaturePopulation;
+}
+
+Surface AlgoGen::getSurfaceMiniatureOriginal() const
+{
+	return this->_surfaceMiniatureOriginal;
+}
+
+Surface AlgoGen::getBestImage()
+{
+	return this->_imageMiniaturePopulation[0].getSurface();
 }
 
 void AlgoGen::capThreshold()
 {
-
-}
-
-void AlgoGen::setImage(const Image image)
-{
-	this->_image = image;
-}
-
-Image AlgoGen::getImage() const
-{
-	return this->_image;
+	if (this->_thresholdSurvivor + this->_thresholdCrossover + this->_thresholdMutation > 1.0f)
+	{
+		this->_thresholdSurvivor = 0.1f;
+		this->_thresholdCrossover = 0.3f;
+		this->_thresholdMutation = 0.3f;
+		this->_thresholdLeftover = 1.0f - (this->_thresholdSurvivor + this->_thresholdCrossover + this->_thresholdMutation);
+	}
 }
 
 void AlgoGen::setPopulation(const int value)
@@ -205,7 +208,7 @@ ImageMiniature AlgoGen::mutation(ImageMiniature image)
 
 ImageMiniature AlgoGen::createRandomImage()
 {
-	ImageMiniature generatedImage(this->_image.getMiniatureSurface().getWidth(), this->_image.getMiniatureSurface().getHeight());
+	ImageMiniature generatedImage(this->_surfaceMiniatureOriginal.getWidth(), this->_surfaceMiniatureOriginal.getHeight());
 
 	Surface::Iter iterImage = generatedImage.getSurface().getIter();
 
@@ -224,7 +227,7 @@ ImageMiniature AlgoGen::createRandomImage()
 void AlgoGen::rateImage(ImageMiniature& imageToRate)
 {
 	//originalImage and imageToRate has the same resolution
-	Surface::Iter iterOriginalImage = this->_image.getMiniatureSurface().getIter();
+	Surface::Iter iterOriginalImage = this->_surfaceMiniatureOriginal.getIter();
 	Surface::Iter iterImageToRate = imageToRate.getSurface().getIter();
 
 	int ratingPixel = 0;
@@ -234,9 +237,6 @@ void AlgoGen::rateImage(ImageMiniature& imageToRate)
 	{
 		while (iterOriginalImage.pixel() && iterImageToRate.pixel())
 		{
-			Vec2i posA = iterOriginalImage.getPos();
-			Vec2i posB = iterImageToRate.getPos();
-
 			ratingPixel = 0;
 
 			ratingPixel += abs(iterOriginalImage.r() - iterImageToRate.r());

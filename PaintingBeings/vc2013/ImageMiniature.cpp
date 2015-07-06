@@ -16,9 +16,9 @@ ImageMiniature::~ImageMiniature()
 {
 }
 
-void ImageMiniature::setSurface(const Surface image)
+void ImageMiniature::setSurface(const Surface surface)
 {
-	this->_surface = image;
+	this->_surface = surface.clone();
 }
 
 void ImageMiniature::setScore(const int value)

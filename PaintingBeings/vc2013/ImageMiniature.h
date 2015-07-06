@@ -19,7 +19,7 @@ class ImageMiniature
 		ImageMiniature(int width, int height);
 		~ImageMiniature();
 
-		void setSurface(const Surface image);
+		void setSurface(const Surface surface);
 		void setScore(const int value);
 
 		Surface getSurface();
@@ -38,5 +38,7 @@ class ImageMiniature
 		bool operator <= (const ImageMiniature & imageMiniature)const;
 		bool operator == (const ImageMiniature & imageMiniature) const;
 		bool operator != (const ImageMiniature & imageMiniature) const;
+
+		void copyImageMiniature(const ImageMiniature imageMiniature);
 };
 
