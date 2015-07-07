@@ -8,10 +8,10 @@ AlgoGen::AlgoGen()
 	this->_scoreToAim = 0;
 	this->_scoreThreshold = 20;
 
-	this->_thresholdSurvivor = 0.1f;
-	this->_thresholdCrossover = 0.3f;
-	this->_thresholdMutation = 0.3f;
-	this->_thresholdLeftover = 0.3f;
+	this->_thresholdSurvivor = 10;
+	this->_thresholdCrossover = 30;
+	this->_thresholdMutation = 30;
+	this->_thresholdLeftover = 30;
 }
 
 
@@ -45,24 +45,24 @@ void AlgoGen::update()
 	std::vector<ImageMiniature> newPopulation;
 
 	//Getting number of survivor / crossed / mutated / leftover ImageMiniature
-	int nbSurvivor = static_cast<int>(this->_populationSize * this->_thresholdSurvivor);
-	int nbCrossover = static_cast<int>(this->_populationSize * this->_thresholdCrossover);
-	int nbMutation = static_cast<int>(this->_populationSize * this->_thresholdMutation);
-	int nbLeftover = nbImage - (nbSurvivor + nbCrossover + nbMutation);
+	float nbSurvivor = static_cast<float>(this->_populationSize * (this->_thresholdSurvivor / 100.0f));
+	float nbCrossover = static_cast<float>(this->_populationSize * (this->_thresholdCrossover / 100.0f));
+	float nbMutation = static_cast<float>(this->_populationSize * (this->_thresholdMutation / 100.0f));
+	float nbLeftover = nbImage - (nbSurvivor + nbCrossover + nbMutation);
 
 	//Filling the new population
 	auto iteratorBegin = this->_imageMiniaturePopulation.begin();
-	newPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + nbSurvivor));
+	newPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + static_cast<int>(nbSurvivor)));
 
 	iteratorBegin = this->_imageMiniaturePopulation.begin();
-	auto crossOverPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + nbCrossover));
+	auto crossOverPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + static_cast<int>(nbCrossover)));
 
 	iteratorBegin = this->_imageMiniaturePopulation.begin();
-	auto mutationPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + nbMutation));
+	auto mutationPopulation = std::vector<ImageMiniature>(iteratorBegin, (iteratorBegin + static_cast<int>(nbMutation)));
 
-	this->generateCrossover(newPopulation, this->_imageMiniaturePopulation, crossOverPopulation, nbCrossover);
-	this->generateMutation(newPopulation, mutationPopulation, nbMutation);
-	this->generateLeftover(newPopulation, nbLeftover);
+	this->generateCrossover(newPopulation, this->_imageMiniaturePopulation, crossOverPopulation, static_cast<int>(nbCrossover));
+	this->generateMutation(newPopulation, mutationPopulation, static_cast<int>(nbMutation));
+	this->generateLeftover(newPopulation, static_cast<int>(nbLeftover));
 
 	this->_imageMiniaturePopulation = newPopulation;
 }
@@ -84,12 +84,14 @@ Surface AlgoGen::getBestImage()
 
 void AlgoGen::capThreshold()
 {
-	if (this->_thresholdSurvivor + this->_thresholdCrossover + this->_thresholdMutation > 1.0f)
+	int total = this->_thresholdSurvivor + this->_thresholdCrossover + this->_thresholdMutation + this->_thresholdLeftover;
+
+	if (total != 100)
 	{
-		this->_thresholdSurvivor = 0.1f;
-		this->_thresholdCrossover = 0.3f;
-		this->_thresholdMutation = 0.3f;
-		this->_thresholdLeftover = 1.0f - (this->_thresholdSurvivor + this->_thresholdCrossover + this->_thresholdMutation);
+		this->_thresholdSurvivor = 10;
+		this->_thresholdCrossover = 30;
+		this->_thresholdMutation = 30;
+		this->_thresholdLeftover = 100 - (this->_thresholdSurvivor + this->_thresholdCrossover + this->_thresholdMutation);
 	}
 }
 
@@ -125,42 +127,42 @@ int& AlgoGen::getScoreThreshold()
 }
 
 
-void AlgoGen::setThresholdSurvivor(const float value)
+void AlgoGen::setThresholdSurvivor(const int value)
 {
 	this->_thresholdSurvivor = value;
 }
 
-void AlgoGen::setThresholdCrossover(const float value)
+void AlgoGen::setThresholdCrossover(const int value)
 {
 	this->_thresholdCrossover = value;
 }
 
-void AlgoGen::setThresholdMutation(const float value)
+void AlgoGen::setThresholdMutation(const int value)
 {
 	this->_thresholdMutation = value;
 }
 
-void AlgoGen::setThresholdNewPopulation(const float value)
+void AlgoGen::setThresholdNewPopulation(const int value)
 {
 	this->_thresholdLeftover = value;
 }
 
-float& AlgoGen::getThresholdSurvivor()
+int& AlgoGen::getThresholdSurvivor()
 {
 	return this->_thresholdSurvivor;
 }
 
-float& AlgoGen::getThresholdCrossover()
+int& AlgoGen::getThresholdCrossover()
 {
 	return this->_thresholdCrossover;
 }
 
-float& AlgoGen::getThresholdMutation()
+int& AlgoGen::getThresholdMutation()
 {
 	return this->_thresholdMutation;
 }
 
-float& AlgoGen::getThresholdNewPopulation()
+int& AlgoGen::getThresholdNewPopulation()
 {
 	return this->_thresholdLeftover;
 }

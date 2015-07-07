@@ -224,6 +224,8 @@ void PaintingBeingsApp::captureCamera()
 		_launchAlgoGen = true;
 		_showImageBeing = false;
 
+		updateInterface(true);
+
 		setPlay();
 	}
 }
@@ -347,10 +349,10 @@ void PaintingBeingsApp::updateInterface(bool readOnlyAlgoGenParams)
 	_params.addParam("Population size", &(_algoGen.getPopulationSize()), "min=10 max=100 step=5", readOnlyAlgoGenParams);
 
 	// Pourcentage pour l'algo gen
-	_params.addParam("% Survivor", &(_algoGen.getThresholdSurvivor()), "min=0.05 max=0.50 step=0.05", readOnlyAlgoGenParams);
-	_params.addParam("% Crossover", &(_algoGen.getThresholdCrossover()), "min=0.05 max=0.50 step=0.05", readOnlyAlgoGenParams);
-	_params.addParam("% Mutation", &(_algoGen.getThresholdMutation()), "min=0.05 max=0.50 step=0.05", readOnlyAlgoGenParams);
-	_params.addParam("% Leftover", &(_algoGen.getThresholdNewPopulation()), "min=0.05 max=0.50 step=0.05", readOnlyAlgoGenParams);
+	_params.addParam("% Survivor", &(_algoGen.getThresholdSurvivor()), "min=5 max=50 step=1", readOnlyAlgoGenParams);
+	_params.addParam("% Crossover", &(_algoGen.getThresholdCrossover()), "min=5 max=50 step=1", readOnlyAlgoGenParams);
+	_params.addParam("% Mutation", &(_algoGen.getThresholdMutation()), "min=5 max=50 step=1", readOnlyAlgoGenParams);
+	_params.addParam("% Leftover", &(_algoGen.getThresholdNewPopulation()), "min=5 max=50 step=1", readOnlyAlgoGenParams);
 
 	// Resolution des Beings
 	_params.addParam("Resolution", &(_imageBeing.getResolution()), "min=1 max=10 step=1", readOnlyAlgoGenParams);
@@ -414,7 +416,7 @@ void PaintingBeingsApp::setup()
 	_arcball.setRadius(radiusArcBall);
 
 
-	// Génération de la population d'ImageSphere
+	// Génération de la population d'ImageBeing
 	_imageBeing = ImageBeing();
 
 	_rectangleAlgoGen.set(-75.0f, 25.0f, -25.0f, -25.0f);

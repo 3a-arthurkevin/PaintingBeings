@@ -29,10 +29,10 @@ class AlgoGen
 		int _scoreThreshold;
 
 		// Seuil servant à créer les nouvelles populations de l'algo génétique
-		float _thresholdSurvivor;
-		float _thresholdCrossover;
-		float _thresholdMutation;
-		float _thresholdLeftover;
+		int _thresholdSurvivor;
+		int _thresholdCrossover;
+		int _thresholdMutation;
+		int _thresholdLeftover;
 
 		// Population d'image
 		std::vector<ImageMiniature> _imageMiniaturePopulation;
@@ -63,14 +63,14 @@ class AlgoGen
 		int& getScoreToAim();
 		int& getScoreThreshold();
 
-		void setThresholdSurvivor(const float value);
-		void setThresholdCrossover(const float value);
-		void setThresholdMutation(const float value);
-		void setThresholdNewPopulation(const float value);
-		float& getThresholdSurvivor();
-		float& getThresholdCrossover();
-		float& getThresholdMutation();
-		float& getThresholdNewPopulation();
+		void setThresholdSurvivor(const int value);
+		void setThresholdCrossover(const int value);
+		void setThresholdMutation(const int value);
+		void setThresholdNewPopulation(const int value);
+		int& getThresholdSurvivor();
+		int& getThresholdCrossover();
+		int& getThresholdMutation();
+		int& getThresholdNewPopulation();
 
 		// Note l'image
 		void rateImage(ImageMiniature& imageToRate);
